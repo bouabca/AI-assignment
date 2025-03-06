@@ -1,33 +1,65 @@
-// src/algorithms/dijkstra.js
-import MinHeap from '../utils/MinHeap';
-import { getNeighbors, reconstructPath } from '../utils/helpers';
+import { maze, numRows, numCols, start, goal } from "../utils/maze";
 
-export function dijkstra(grid, start, end) {
-  const pq = new MinHeap();
-  const distances = new Map();
-  const parentMap = new Map();
+// Helper function to get neighbors
+function getNeighbors([row, col]) {
+  const neighbors = [];
+  const directions = [
+    [-1, 0], // up
+    [1, 0], // down
+    [0, -1], // left
+    [0, 1], // right
+  ];
+  for (let [dr, dc] of directions) {
+    const r = row + dr, c = col + dc;
+    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] !== 1) {
+      // Ensure it's a walkable cell (not a wall)
+      neighbors.push([r, c]);
+    }
+  }
+  return neighbors;
+}
 
-  const startKey = `${start.x},${start.y}`;
-  distances.set(startKey, 0);
-  pq.insert({ node: start, cost: 0 });
+export function solveMazeDijkstra(start, goal) {
+  const pq = [start]; // Priority queue
+  const gScores = { [start.toString()]: 0 }; // Distance from start
+  const explored = [];
+  const parents = {};
+  parents[start.toString()] = null;
 
-  while (!pq.isEmpty()) {
-    const { node, cost } = pq.extractMin();
+  while (pq.length > 0) {
+    // Sort pq by gScores, smallest gScore first
+    pq.sort((a, b) => gScores[a.toString()] - gScores[b.toString()]);
+    const current = pq.shift();
+    explored.push(current);
 
-    if (node.x === end.x && node.y === end.y) {
-      return reconstructPath(parentMap, end);
+    // Goal reached
+    if (current[0] === goal[0] && current[1] === goal[1]) {
+      return { solutionPath: reconstructPath(parents, current), explored };
     }
 
-    const neighbors = getNeighbors(grid, node);
-    for (const neighbor of neighbors) {
-      const neighborKey = `${neighbor.x},${neighbor.y}`;
-      const newCost = cost + 1; // Assuming uniform cost
-      if (newCost < (distances.get(neighborKey) ?? Infinity)) {
-        distances.set(neighborKey, newCost);
-        parentMap.set(neighborKey, node);
-        pq.insert({ node: neighbor, cost: newCost });
+    for (let neighbor of getNeighbors(current)) {
+      const weight = maze[neighbor[0]][neighbor[1]]; // Get the cost of the neighboring cell
+      const tentativeGScore = gScores[current.toString()] + weight;
+      const key = neighbor.toString();
+
+      if (!(key in gScores) || tentativeGScore < gScores[key]) {
+        parents[key] = current;
+        gScores[key] = tentativeGScore;
+        if (!pq.some(cell => cell.toString() === key)) {
+          pq.push(neighbor);
+        }
       }
     }
   }
-  return [];
+  return { solutionPath: null, explored };
+}
+
+function reconstructPath(parents, end) {
+  const path = [];
+  let current = end;
+  while (current) {
+    path.push(current);
+    current = parents[current.toString()];
+  }
+  return path.reverse();
 }

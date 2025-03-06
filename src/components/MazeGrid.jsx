@@ -1,25 +1,107 @@
-// src/components/MazeGrid.jsx
-import React from 'react';
-import { generateMaze } from '../utils/generateMaze';
+import React, { useState } from 'react';
+import { solveMazeBFS } from '../algorithms/bfs';
+import { solveMazeDFS } from '../algorithms/dfs';
+import { solveMazeAStar } from '../algorithms/aStar';
+import { solveMazeDijkstra } from '../algorithms/dijkstra';
+import { solveMazeUniformCost } from '../algorithms/uniformCost';
+import { maze, start, goal, numRows, numCols } from '../utils/maze';
 
-const MazeGrid = ({ width = 21, height = 21 }) => {
-  const maze = generateMaze(width, height);
+function MazeCell({ row, col, isWall, isStart, isGoal, isExplored, isPath }) {
+  let bgColor = "bg-white";
+  if (isWall) bgColor = "bg-gray-800";
+  else if (isStart) bgColor = "bg-green-500";
+  else if (isGoal) bgColor = "bg-red-500";
+  else if (isPath) bgColor = "bg-blue-500";
+  else if (isExplored) bgColor = "bg-yellow-300";
+
   return (
-    <div className="grid gap-1 p-4 bg-gray-900 rounded-lg shadow-lg" style={{ gridTemplateColumns: `repeat(${width}, 1rem)` }}>
-      {maze.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          const isStart = rowIndex === 1 && colIndex === 1;
-          const isEnd = rowIndex === height - 2 && colIndex === width - 2;
-          return (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              className={`w-4 h-4 border ${cell === 1 ? 'bg-gray-700' : 'bg-white'} 
-                ${isStart ? 'bg-green-500' : ''} 
-                ${isEnd ? 'bg-red-500' : ''}`}
-            ></div>
-          );
-        })
-      )}
+    <div
+      className={`w-10 h-10 border border-gray-300 flex items-center justify-center transition-colors duration-300 ${bgColor}`}
+    ></div>
+  );
+}
+
+const MazeGrid = ({ algorithm }) => {
+  const [explored, setExplored] = useState([]);
+  const [path, setPath] = useState([]);
+  const [running, setRunning] = useState(false);
+
+  const runAlgorithm = async () => {
+    setRunning(true);
+    setExplored([]);
+    setPath([]);
+
+    let result;
+    switch (algorithm) {
+      case 'BFS':
+        result = solveMazeBFS(start, goal);
+        break;
+      case 'DFS':
+        result = solveMazeDFS(start, goal);
+        break;
+      case 'A*':
+        result = solveMazeAStar(start, goal);
+        break;
+      case 'Dijkstra':
+        result = solveMazeDijkstra(start, goal);
+        break;
+      case 'Uniform Cost':
+        result = solveMazeUniformCost(start, goal);
+        break;
+      default:
+        return;
+    }
+
+    // Explore and solve path animation
+    for (let i = 0; i < result.explored.length; i++) {
+      setExplored((prev) => [...prev, result.explored[i]]);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    if (result.solutionPath) {
+      for (let i = 0; i < result.solutionPath.length; i++) {
+        setPath((prev) => [...prev, result.solutionPath[i]]);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+
+    setRunning(false);
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="grid gap-1 p-4 bg-gray-900 rounded-lg shadow-lg" style={{ gridTemplateColumns: `repeat(${numCols}, 2.5rem)` }}>
+        {maze.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const currentCell = [rowIndex, colIndex];
+            const isStart = currentCell[0] === start[0] && currentCell[1] === start[1];
+            const isGoal = currentCell[0] === goal[0] && currentCell[1] === goal[1];
+            const isWall = cell === 1;
+            const isExplored = !isWall && explored.some(e => e[0] === currentCell[0] && e[1] === currentCell[1]);
+            const isPath = !isWall && path.some(p => p[0] === currentCell[0] && p[1] === currentCell[1]);
+
+            return (
+              <MazeCell
+                key={`${rowIndex}-${colIndex}`}
+                row={rowIndex}
+                col={colIndex}
+                isWall={isWall}
+                isStart={isStart}
+                isGoal={isGoal}
+                isExplored={isExplored}
+                isPath={isPath}
+              />
+            );
+          })
+        )}
+      </div>
+      <button
+        onClick={runAlgorithm}
+        disabled={running}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        {running ? 'Running...' : 'Run Algorithm'}
+      </button>
     </div>
   );
 };

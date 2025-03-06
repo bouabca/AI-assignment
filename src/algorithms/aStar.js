@@ -1,50 +1,72 @@
-// src/algorithms/aStar.js
-import MinHeap from '../utils/MinHeap';
-import { getNeighbors, reconstructPath, heuristic } from '../utils/helpers';
+import { maze, numRows, numCols, start, goal } from "../utils/maze";
 
-export function aStar(grid, start, end) {
-  const openSet = new MinHeap();
-  const closedSet = new Set();
-  const gScore = new Map();
-  const fScore = new Map();
-  const parentMap = new Map();
+// Helper function to get neighbors and calculate the heuristic
+function getNeighbors([row, col]) {
+  const neighbors = [];
+  const directions = [
+    [-1, 0], // up
+    [1, 0], // down
+    [0, -1], // left
+    [0, 1], // right
+  ];
+  for (let [dr, dc] of directions) {
+    const r = row + dr, c = col + dc;
+    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] !== 1) {
+      // Ensure it's a walkable cell (not a wall)
+      neighbors.push([r, c]);
+    }
+  }
+  return neighbors;
+}
 
-  const startKey = `${start.x},${start.y}`;
-  gScore.set(startKey, 0);
-  fScore.set(startKey, heuristic(start, end));
-  openSet.insert({ node: start, cost: fScore.get(startKey) });
+// Manhattan heuristic
+function heuristic([row, col], goal) {
+  return Math.abs(row - goal[0]) + Math.abs(col - goal[1]);
+}
 
-  while (!openSet.isEmpty()) {
-    const { node } = openSet.extractMin();
-    const nodeKey = `${node.x},${node.y}`;
+export function solveMazeAStar(start, goal) {
+  const openList = [start];
+  const gScores = { [start.toString()]: 0 }; // Cost from start
+  const fScores = { [start.toString()]: heuristic(start, goal) }; // Estimated total cost
+  const explored = [];
+  const parents = {};
+  parents[start.toString()] = null;
 
-    // If we reached the goal, reconstruct the path.
-    if (node.x === end.x && node.y === end.y) {
-      return reconstructPath(parentMap, end);
+  while (openList.length > 0) {
+    // Sort openList by fScores, smallest fScore first
+    openList.sort((a, b) => fScores[a.toString()] - fScores[b.toString()]);
+    const current = openList.shift();
+    explored.push(current);
+
+    // Goal reached
+    if (current[0] === goal[0] && current[1] === goal[1]) {
+      return { solutionPath: reconstructPath(parents, current), explored };
     }
 
-    // If node already processed, skip it.
-    if (closedSet.has(nodeKey)) continue;
-    closedSet.add(nodeKey);
+    for (let neighbor of getNeighbors(current)) {
+      const weight = maze[neighbor[0]][neighbor[1]]; // Get the cost of the neighboring cell
+      const tentativeGScore = gScores[current.toString()] + weight;
+      const key = neighbor.toString();
 
-    const neighbors = getNeighbors(grid, node);
-    for (const neighbor of neighbors) {
-      const neighborKey = `${neighbor.x},${neighbor.y}`;
-
-      // Skip neighbor if it is in closed set.
-      if (closedSet.has(neighborKey)) continue;
-
-      const tentativeGScore = (gScore.get(nodeKey) || Infinity) + 1; // Uniform cost
-
-      if (tentativeGScore < (gScore.get(neighborKey) || Infinity)) {
-        parentMap.set(neighborKey, node);
-        gScore.set(neighborKey, tentativeGScore);
-        const f = tentativeGScore + heuristic(neighbor, end);
-        fScore.set(neighborKey, f);
-        openSet.insert({ node: neighbor, cost: f });
+      if (!(key in gScores) || tentativeGScore < gScores[key]) {
+        parents[key] = current;
+        gScores[key] = tentativeGScore;
+        fScores[key] = tentativeGScore + heuristic(neighbor, goal);
+        if (!openList.some(cell => cell.toString() === key)) {
+          openList.push(neighbor);
+        }
       }
     }
   }
-  // Return empty if no path found.
-  return [];
+  return { solutionPath: null, explored };
+}
+
+function reconstructPath(parents, end) {
+  const path = [];
+  let current = end;
+  while (current) {
+    path.push(current);
+    current = parents[current.toString()];
+  }
+  return path.reverse();
 }

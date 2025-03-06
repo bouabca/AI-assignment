@@ -1,6 +1,6 @@
 import { maze, numRows, numCols, start, goal } from "../utils/maze";
 
-// Helper function to get neighbors (ignores weights)
+// Helper function to get neighbors
 function getNeighbors([row, col]) {
   const neighbors = [];
   const directions = [
@@ -11,24 +11,24 @@ function getNeighbors([row, col]) {
   ];
   for (let [dr, dc] of directions) {
     const r = row + dr, c = col + dc;
-    // Ignore weight, just check if the cell is open (0)
-    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] === 0) {
+    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] !== 1) { // avoid walls
       neighbors.push([r, c]);
     }
   }
   return neighbors;
 }
 
-export function solveMazeDFS(start, goal) {
-  const stack = [start];
+export function solveMazeUniformCost(start, goal) {
+  const pq = [start]; // Priority queue
+  const gScores = { [start.toString()]: 0 }; // Distance from start
   const explored = [];
-  const visited = new Set();
   const parents = {};
-  visited.add(start.toString());
   parents[start.toString()] = null;
 
-  while (stack.length > 0) {
-    const current = stack.pop();
+  while (pq.length > 0) {
+    // Sort pq by gScores, smallest gScore first
+    pq.sort((a, b) => gScores[a.toString()] - gScores[b.toString()]);
+    const current = pq.shift();
     explored.push(current);
 
     if (current[0] === goal[0] && current[1] === goal[1]) {
@@ -36,11 +36,16 @@ export function solveMazeDFS(start, goal) {
     }
 
     for (let neighbor of getNeighbors(current)) {
+      // Calculate the gScore based on the weight of the cell
+      const tentativeGScore = gScores[current.toString()] + maze[neighbor[0]][neighbor[1]];
       const key = neighbor.toString();
-      if (!visited.has(key)) {
-        visited.add(key);
+
+      if (!(key in gScores) || tentativeGScore < gScores[key]) {
         parents[key] = current;
-        stack.push(neighbor);
+        gScores[key] = tentativeGScore;
+        if (!pq.some(cell => cell.toString() === key)) {
+          pq.push(neighbor);
+        }
       }
     }
   }

@@ -1,30 +1,58 @@
-// src/algorithms/bfs.js
-import { getNeighbors, reconstructPath } from '../utils/helpers';
+import { maze, numRows, numCols, start, goal } from "../utils/maze";
 
-export function bfs(grid, start, end) {
-  const queue = [start];
-  const visited = new Set();
-  const parentMap = new Map();
-
-  while (queue.length) {
-    const node = queue.shift();
-    if (node.x === end.x && node.y === end.y) {
-      return reconstructPath(parentMap, end);
+// Helper function to get neighbors (ignores weights)
+function getNeighbors([row, col]) {
+  const neighbors = [];
+  const directions = [
+    [-1, 0], // up
+    [1, 0], // down
+    [0, -1], // left
+    [0, 1], // right
+  ];
+  for (let [dr, dc] of directions) {
+    const r = row + dr, c = col + dc;
+    // Ignore weight, just check if the cell is open (0)
+    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] === 0) {
+      neighbors.push([r, c]);
     }
-    const nodeKey = `${node.x},${node.y}`;
-    if (!visited.has(nodeKey)) {
-      visited.add(nodeKey);
-      const neighbors = getNeighbors(grid, node);
-      for (const neighbor of neighbors) {
-        const neighborKey = `${neighbor.x},${neighbor.y}`;
-        if (!visited.has(neighborKey)) {
-          queue.push(neighbor);
-          if (!parentMap.has(neighborKey)) {
-            parentMap.set(neighborKey, node);
-          }
-        }
+  }
+  return neighbors;
+}
+
+export function solveMazeBFS(start, goal) {
+  const queue = [start];
+  const explored = [];
+  const visited = new Set();
+  const parents = {};
+  visited.add(start.toString());
+  parents[start.toString()] = null;
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    explored.push(current);
+
+    if (current[0] === goal[0] && current[1] === goal[1]) {
+      return { solutionPath: reconstructPath(parents, current), explored };
+    }
+
+    for (let neighbor of getNeighbors(current)) {
+      const key = neighbor.toString();
+      if (!visited.has(key)) {
+        visited.add(key);
+        parents[key] = current;
+        queue.push(neighbor);
       }
     }
   }
-  return [];
+  return { solutionPath: null, explored };
+}
+
+function reconstructPath(parents, end) {
+  const path = [];
+  let current = end;
+  while (current) {
+    path.push(current);
+    current = parents[current.toString()];
+  }
+  return path.reverse();
 }
