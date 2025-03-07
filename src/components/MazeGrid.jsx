@@ -44,13 +44,13 @@ const MazeGrid = ({ algorithm }) => {
         return;
     }
 
-    // Animate explored cells
+    // Animate explored cells (yellow)
     for (let i = 0; i < result.explored.length; i++) {
       setExplored(prev => [...prev, result.explored[i]]);
       await new Promise(resolve => setTimeout(resolve, 50));
     }
 
-    // Animate solution path
+    // Animate solution path (blue)
     if (result.solutionPath) {
       for (let i = 0; i < result.solutionPath.length; i++) {
         setPath(prev => [...prev, result.solutionPath[i]]);
@@ -94,7 +94,7 @@ const MazeGrid = ({ algorithm }) => {
       <button
         onClick={runAlgorithm}
         disabled={running}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-300"
       >
         {running ? 'Running...' : 'Run Algorithm'}
       </button>

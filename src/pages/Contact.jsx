@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaGithub, FaInstagram, FaFacebook, FaDiscord } from 'react-icons/fa';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -7,51 +8,80 @@ export default function Contact() {
     message: ''
   });
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission
+    alert('Message sent successfully!');
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <div className="container mx-auto max-w-2xl">
-        <h2 className="text-3xl font-bold mb-8">Contact & Suggestions</h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center py-16 px-6">
+      <div className="w-full max-w-3xl bg-gray-950/80 backdrop-blur-md p-8 rounded-lg shadow-xl border border-gray-800">
+        <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent mb-6">Get in Touch</h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block mb-2">Name</label>
+          <div className="relative">
+            <label className="block text-gray-300 mb-2">Name</label>
             <input
               type="text"
-              className="w-full bg-gray-800 p-3 rounded"
+              name="name"
+              className="w-full p-3 bg-gray-800 text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
               required
+              value={formData.name}
+              onChange={handleChange}
             />
           </div>
           
-          <div>
-            <label className="block mb-2">Email</label>
+          <div className="relative">
+            <label className="block text-gray-300 mb-2">Email</label>
             <input
               type="email"
-              className="w-full bg-gray-800 p-3 rounded"
+              name="email"
+              className="w-full p-3 bg-gray-800 text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
               required
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
           
-          <div>
-            <label className="block mb-2">Suggestions</label>
+          <div className="relative">
+            <label className="block text-gray-300 mb-2">Message</label>
             <textarea
+              name="message"
               rows="5"
-              className="w-full bg-gray-800 p-3 rounded"
+              className="w-full p-3 bg-gray-800 text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
               required
+              value={formData.message}
+              onChange={handleChange}
             ></textarea>
           </div>
           
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded w-full"
+            className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:scale-105 transition-transform duration-300 shadow-md"
           >
             Send Message
           </button>
         </form>
+      </div>
+      
+      {/* Social Media Links */}
+      <div className="flex space-x-6 mt-8">
+        <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-all text-3xl">
+          <FaGithub />
+        </a>
+        <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-400 transition-all text-3xl">
+          <FaInstagram />
+        </a>
+        <a href="https://facebook.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-all text-3xl">
+          <FaFacebook />
+        </a>
+        <a href="https://discord.gg/yourserver" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-400 transition-all text-3xl">
+          <FaDiscord />
+        </a>
       </div>
     </div>
   );
