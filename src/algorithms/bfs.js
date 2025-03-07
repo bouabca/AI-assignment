@@ -1,17 +1,16 @@
-import { maze, numRows, numCols, start, goal } from "../utils/maze";
+import { maze, numRows, numCols } from "../utils/maze";
 
 // Helper function to get neighbors (ignores weights)
 function getNeighbors([row, col]) {
   const neighbors = [];
   const directions = [
     [-1, 0], // up
-    [1, 0], // down
+    [1, 0],  // down
     [0, -1], // left
-    [0, 1], // right
+    [0, 1]   // right
   ];
   for (let [dr, dc] of directions) {
     const r = row + dr, c = col + dc;
-    // Ignore weight, just check if the cell is open (0)
     if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] === 0) {
       neighbors.push([r, c]);
     }

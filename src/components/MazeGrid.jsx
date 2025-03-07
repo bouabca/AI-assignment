@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { solveMazeBFS } from '../algorithms/bfs';
 import { solveMazeDFS } from '../algorithms/dfs';
 import { solveMazeAStar } from '../algorithms/aStar';
-import { solveMazeDijkstra } from '../algorithms/dijkstra';
-import { solveMazeUniformCost } from '../algorithms/uniformCost';
 import { maze, start, goal, numRows, numCols } from '../utils/maze';
 
 function MazeCell({ row, col, isWall, isStart, isGoal, isExplored, isPath }) {
@@ -42,26 +40,21 @@ const MazeGrid = ({ algorithm }) => {
       case 'A*':
         result = solveMazeAStar(start, goal);
         break;
-      case 'Dijkstra':
-        result = solveMazeDijkstra(start, goal);
-        break;
-      case 'Uniform Cost':
-        result = solveMazeUniformCost(start, goal);
-        break;
       default:
         return;
     }
 
-    // Explore and solve path animation
+    // Animate explored cells
     for (let i = 0; i < result.explored.length; i++) {
-      setExplored((prev) => [...prev, result.explored[i]]);
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      setExplored(prev => [...prev, result.explored[i]]);
+      await new Promise(resolve => setTimeout(resolve, 50));
     }
 
+    // Animate solution path
     if (result.solutionPath) {
       for (let i = 0; i < result.solutionPath.length; i++) {
-        setPath((prev) => [...prev, result.solutionPath[i]]);
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        setPath(prev => [...prev, result.solutionPath[i]]);
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
 
@@ -70,7 +63,10 @@ const MazeGrid = ({ algorithm }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="grid gap-1 p-4 bg-gray-900 rounded-lg shadow-lg" style={{ gridTemplateColumns: `repeat(${numCols}, 2.5rem)` }}>
+      <div
+        className="grid gap-1 p-4 bg-gray-900 rounded-lg shadow-lg"
+        style={{ gridTemplateColumns: `repeat(${numCols}, 2.5rem)` }}
+      >
         {maze.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const currentCell = [rowIndex, colIndex];

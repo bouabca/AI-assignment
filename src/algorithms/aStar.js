@@ -1,33 +1,32 @@
-import { maze, numRows, numCols, start, goal } from "../utils/maze";
+import { maze, numRows, numCols } from "../utils/maze";
 
-// Helper function to get neighbors and calculate the heuristic
+// Helper function to get neighbors (ignores weights)
 function getNeighbors([row, col]) {
   const neighbors = [];
   const directions = [
     [-1, 0], // up
-    [1, 0], // down
+    [1, 0],  // down
     [0, -1], // left
-    [0, 1], // right
+    [0, 1]   // right
   ];
   for (let [dr, dc] of directions) {
     const r = row + dr, c = col + dc;
-    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] !== 1) {
-      // Ensure it's a walkable cell (not a wall)
+    if (r >= 0 && r < numRows && c >= 0 && c < numCols && maze[r][c] === 0) {
       neighbors.push([r, c]);
     }
   }
   return neighbors;
 }
 
-// Manhattan heuristic
+// Manhattan distance heuristic
 function heuristic([row, col], goal) {
   return Math.abs(row - goal[0]) + Math.abs(col - goal[1]);
 }
 
 export function solveMazeAStar(start, goal) {
   const openList = [start];
-  const gScores = { [start.toString()]: 0 }; // Cost from start
-  const fScores = { [start.toString()]: heuristic(start, goal) }; // Estimated total cost
+  const gScores = { [start.toString()]: 0 };
+  const fScores = { [start.toString()]: heuristic(start, goal) };
   const explored = [];
   const parents = {};
   parents[start.toString()] = null;
@@ -38,14 +37,12 @@ export function solveMazeAStar(start, goal) {
     const current = openList.shift();
     explored.push(current);
 
-    // Goal reached
     if (current[0] === goal[0] && current[1] === goal[1]) {
       return { solutionPath: reconstructPath(parents, current), explored };
     }
 
     for (let neighbor of getNeighbors(current)) {
-      const weight = maze[neighbor[0]][neighbor[1]]; // Get the cost of the neighboring cell
-      const tentativeGScore = gScores[current.toString()] + weight;
+      const tentativeGScore = gScores[current.toString()] + 1;
       const key = neighbor.toString();
 
       if (!(key in gScores) || tentativeGScore < gScores[key]) {
