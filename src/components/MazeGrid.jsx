@@ -7,9 +7,9 @@ import { maze, start, goal, numRows, numCols } from "../utils/maze";
 function MazeCell({ row, col, isWall, isStart, isGoal, isExplored, isPath }) {
   let bgColor = "bg-white";
   if (isWall) bgColor = "bg-gray-800";
-  else if (isStart) bgColor = "bg-green-500";
+  else if (isStart) bgColor = "bg-blue-500";
   else if (isGoal) bgColor = "bg-red-500";
-  else if (isPath) bgColor = "bg-blue-500";
+  else if (isPath) bgColor = "bg-green-500";
   else if (isExplored) bgColor = "bg-yellow-300";
 
   return (
