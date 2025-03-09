@@ -19,7 +19,7 @@ const Solver = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-[rgb(var(--color-surface))] p-4 rounded-xl shadow-md">
           <label className="text-sm font-medium">Algorithm:</label>
           <select
-            className="px-4 py-2 bg-[rgb(var(--color-bg))] rounded-lg border dark:border-slate-700 border-slate-300 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary))]"
+            className="px-4 py-2 bg-black rounded-lg border dark:border-slate-700 border-slate-300 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary))]"
             value={algorithm}
             onChange={(e) => setAlgorithm(e.target.value)}
           >

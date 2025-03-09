@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import gif from "../../public/videos/ezgif.com-video-to-gif-converter.gif";
 
 // Animation variants
@@ -16,6 +17,8 @@ const containerVariants = {
     transition: { staggerChildren: 0.2 },
   },
 };
+
+const MotionLink = motion(Link);
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -79,22 +82,22 @@ export default function Home() {
               variants={itemVariants}
               className="flex justify-center gap-4 mb-16"
             >
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                href="/maze"
-                className="flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all duration-300 shadow-lg"
-                onClick={() => setIsLoading(true)}
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <FaRocket className="mr-2" />
-                    Start Exploring
-                  </>
-                )}
-              </motion.a>
+              <MotionLink
+  whileHover={{ scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+  to="/maze"
+  className="flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all duration-300 shadow-lg"
+  onClick={() => setIsLoading(true)}
+>
+  {isLoading ? (
+    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    <>
+      <FaRocket className="mr-2" />
+      Start Exploring
+    </>
+  )}
+</MotionLink>
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -283,41 +286,45 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="text-center pb-8 text-slate-400 mt-20"
+
+<motion.footer
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: true }}
+  className="text-center pb-8 text-slate-400 mt-20"
+>
+  <div className="flex justify-center gap-6 mb-4">
+    <motion.div whileHover={{ scale: 1.1 }}>
+      <Link 
+        to="/docs" 
+        className="hover:text-blue-400 transition-colors"
       >
-        <div className="flex justify-center gap-6 mb-4">
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            href="/docs"
-            className="hover:text-blue-400 transition-colors"
-          >
-            Documentation
-          </motion.a>
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            href="/blog"
-            className="hover:text-blue-400 transition-colors"
-          >
-            Blog
-          </motion.a>
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            href="/contact"
-            className="hover:text-blue-400 transition-colors"
-          >
-            Contact
-          </motion.a>
-        </div>
-        <p className="text-sm">
-          Built with ❤️ using React, Tailwind & Framer Motion
-          <br />
-          <span className="text-xs opacity-75">Open source on GitHub</span> 🚀
-        </p>
-      </motion.footer>
+        Documentation
+      </Link>
+    </motion.div>
+    <motion.div whileHover={{ scale: 1.1 }}>
+      <Link 
+        to="/blog" 
+        className="hover:text-blue-400 transition-colors"
+      >
+        Blog
+      </Link>
+    </motion.div>
+    <motion.div whileHover={{ scale: 1.1 }}>
+      <Link 
+        to="/contact" 
+        className="hover:text-blue-400 transition-colors"
+      >
+        Contact
+      </Link>
+    </motion.div>
+  </div>
+  <p className="text-sm">
+    Built with ❤️ using React, Tailwind & Framer Motion
+    <br />
+    <span className="text-xs opacity-75">Open source on GitHub</span> 🚀
+  </p>
+</motion.footer>
     </div>
   );
 }
