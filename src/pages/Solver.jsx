@@ -1,11 +1,17 @@
+// Solver.jsx
 import React, { useState } from 'react';
 import MazeGrid from '../components/MazeGrid';
+import PathTables from '../components/PathTables';
 
 const Solver = () => {
   const [algorithm, setAlgorithm] = useState('BFS');
+  const [explored, setExplored] = useState([]);
+  const [path, setPath] = useState([]);
+  const [running, setRunning] = useState(false);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))] p-8">
+    <div className="flex flex-col min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))] p-8">
+      {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-secondary))] bg-clip-text text-transparent mb-4">
           Pathfinding Visualizer
@@ -15,7 +21,8 @@ const Solver = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-4xl mb-8">
+      {/* Algorithm Selector */}
+      <div className="w-full max-w-4xl mb-8 mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 bg-[rgb(var(--color-surface))] p-4 rounded-xl shadow-md">
           <label className="text-sm font-medium">Algorithm:</label>
           <select
@@ -30,7 +37,26 @@ const Solver = () => {
         </div>
       </div>
 
-      <MazeGrid algorithm={algorithm} />
+      {/* Main Content - Inverted Layout */}
+      <div className="flex flex-col lg:flex-row gap-8 w-full max-w-7xl mx-auto">
+        {/* Maze on the Left - Wider */}
+        <div className="lg:w-3/5">
+          <MazeGrid 
+            algorithm={algorithm}
+            explored={explored}
+            path={path}
+            running={running}
+            setExplored={setExplored}
+            setPath={setPath}
+            setRunning={setRunning}
+          />
+        </div>
+        
+        {/* Tables on the Right - Narrower */}
+        <div className="lg:w-2/5">
+          <PathTables explored={explored} path={path} />
+        </div>
+      </div>
     </div>
   );
 };
