@@ -1,7 +1,7 @@
-import { maze, numRows, numCols } from "../utils/maze";
+import { numRows, numCols } from "../utils/maze";
 
 // Helper function to get neighbors (ignores weights)
-function getNeighbors([row, col]) {
+function getNeighbors([row, col], maze) {
   const neighbors = [];
   const directions = [
     [-1, 0], // up
@@ -18,23 +18,24 @@ function getNeighbors([row, col]) {
   return neighbors;
 }
 
-export function solveMazeDFS(start, goal) {
+export function solveMazeDFS(maze, start, goal) {
   const stack = [start];
   const explored = [];
   const visited = new Set();
   const parents = {};
+  
   visited.add(start.toString());
   parents[start.toString()] = null;
-
+  
   while (stack.length > 0) {
     const current = stack.pop();
     explored.push(current);
-
+    
     if (current[0] === goal[0] && current[1] === goal[1]) {
-      return { solutionPath: reconstructPath(parents, current), explored };
+      return { explored, solutionPath: reconstructPath(parents, current) };
     }
-
-    for (let neighbor of getNeighbors(current)) {
+    
+    for (let neighbor of getNeighbors(current, maze)) {
       const key = neighbor.toString();
       if (!visited.has(key)) {
         visited.add(key);
@@ -43,7 +44,7 @@ export function solveMazeDFS(start, goal) {
       }
     }
   }
-  return { solutionPath: null, explored };
+  return { explored, solutionPath: null };
 }
 
 function reconstructPath(parents, end) {
