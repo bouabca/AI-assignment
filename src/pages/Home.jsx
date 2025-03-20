@@ -282,7 +282,6 @@ export default function Home() {
         <AlgorithmComparisonTable />
 
         {/* Maze Builder Preview */}
-        <MazeBuilderPreview />
       </main>
 
       {/* Footer */}
@@ -380,52 +379,7 @@ function AlgorithmComparisonTable() {
   );
 }
 
-function MazeBuilderPreview() {
-  const [selectedCells, setSelectedCells] = useState(new Set());
 
-  const toggleCell = (index) => {
-    setSelectedCells((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        newSet.add(index);
-      }
-      return newSet;
-    });
-  };
-
-  return (
-    <motion.section
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      className="max-w-4xl mx-auto mb-32 p-8 bg-slate-900/50 rounded-2xl"
-    >
-      <h3 className="text-2xl font-bold mb-6">Maze Builder Preview</h3>
-      <div className="grid grid-cols-8 gap-1">
-        {Array(64)
-          .fill()
-          .map((_, i) => (
-            <motion.div
-              key={i}
-              onClick={() => toggleCell(i)}
-              className={`aspect-square rounded-sm cursor-pointer transition-all ${
-                selectedCells.has(i)
-                  ? "bg-blue-500/80"
-                  : "bg-slate-800 hover:bg-blue-500/30"
-              }`}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            />
-          ))}
-      </div>
-      <p className="text-slate-500 text-sm mt-4 text-center">
-        Click cells to create walls (interactive demo)
-      </p>
-    </motion.section>
-  );
-}
 
 function FeatureCard({ icon, title, description, color }) {
   return (

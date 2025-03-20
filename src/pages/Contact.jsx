@@ -70,16 +70,13 @@ export default function Contact() {
       
       {/* Social Media Links */}
       <div className="flex space-x-6 mt-8">
-        <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-all text-3xl">
+        <a href="https://github.com/Moudjib16" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-all text-3xl">
           <FaGithub />
         </a>
-        <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-400 transition-all text-3xl">
+        <a href="https://instagram.com/moujiiiiiiii" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-400 transition-all text-3xl">
           <FaInstagram />
         </a>
-        <a href="https://facebook.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-all text-3xl">
-          <FaFacebook />
-        </a>
-        <a href="https://discord.gg/yourserver" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-400 transition-all text-3xl">
+        <a href="https://discord.gg/Wele_Welo_Weli" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-400 transition-all text-3xl">
           <FaDiscord />
         </a>
       </div>
