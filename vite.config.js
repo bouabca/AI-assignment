@@ -11,5 +11,6 @@ export default defineConfig({
       'all',
       // Vous pouvez ajouter d'autres hôtes autorisés si nécessaire
     ]
-  }
+  },
+  preview: { allowedHosts: [ 'all' ] }
 })
