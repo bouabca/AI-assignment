@@ -8,12 +8,12 @@ export default defineConfig({
     host: true,
     port: 4173,
     strictPort: true,
-    allowedHosts: ['mouji-mouji-qjzges-64c235-165-232-73-157.traefik.me']
+    allowedHosts: ['mouji-mouji-qjzges-64c235-165-232-73-157.traefik.me','mouji-mouji-qjzges-ac4bfe-165-232-73-157.traefik.me']
   },
   server: {
     host: true,
     port: 4173,
     strictPort: true,
-    allowedHosts: ['mouji-mouji-qjzges-64c235-165-232-73-157.traefik.me']
+    allowedHosts: ['mouji-mouji-qjzges-64c235-165-232-73-157.traefik.me','mouji-mouji-qjzges-ac4bfe-165-232-73-157.traefik.me']
   }
 })
